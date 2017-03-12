@@ -1,3 +1,4 @@
+
 from random import randint
 
 raw_prices = []
