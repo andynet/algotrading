@@ -1,16 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import functions
 
-buying_prices = []
-selling_prices = []
 buying_prices_purified = []
 selling_prices_purified = []
 
-with open("EUR_USD.data") as f:
-    lines = f.readlines()
-    for line in lines:
-        selling_prices.append(float(line.split()[0]))
-        buying_prices.append(float(line.split()[1]))
+buying_prices, selling_prices = functions.read_input("EUR_USD.data")
 
 for i in range(1, len(buying_prices)-1):
     if buying_prices[i-1] > buying_prices[i] <= buying_prices[i+1]:
@@ -39,6 +34,26 @@ for i in range(0,len(buying_prices_purified)):
         merged_prices.append(None)
 
 print(merged_prices)
+
+order_placed = False
+balance = 1000000
+order_buy_price = None
+for i in range(len(merged_prices)):
+    # ak nemam poziciu a zaroven mam kupovaci bod
+    if not order_placed and buying_prices_purified[i] != None:
+        order_placed = True
+        order_buy_price = buying_prices_purified[i]
+        balance = balance/order_buy_price
+    # ak mam poziciu, ale nasiel som lepsi kupovaci bod
+    if order_placed and buying_prices_purified[i] != None and buying_prices_purified[i] < order_buy_price:
+        balance = balance*order_buy_price/buying_prices_purified[i]
+        order_buy_price = buying_prices_purified[i]
+    # ak mam poziciu a nasiel som dobry predajny bod - chyba overenie ci je najlepsi
+    if order_placed and selling_prices_purified[i] != None and selling_prices_purified[i] > order_buy_price:
+        balance = balance*selling_prices_purified[i]
+        order_placed = False
+
+print(balance)
 
 xs = np.arange(max(len(buying_prices_purified), len(selling_prices_purified)))
 series1 = np.array(buying_prices_purified).astype(np.double)
