@@ -43,19 +43,27 @@ def find_next_sellpoint(current_sellpoint, selling_prices):
 
     return None
 
+# def find_next_sellpoint(current_sellpoint, selling_prices):
+#     for i in range(current_sellpoint, len(selling_prices)):
+#         if selling_prices[i] is not None:
+#             return i
+#
+#     return None
 
 def find_next_buypoint(current_sellpoint, next_sellpoint, selling_prices, buying_prices):
     current_sellpoint_value = selling_prices[current_sellpoint]
+    next_sellpoint_value = selling_prices[current_sellpoint]
 
     for i in range(current_sellpoint, next_sellpoint):
         if buying_prices[i] == None:
             continue
-        if buying_prices[i] < current_sellpoint_value:
+        if current_sellpoint_value > buying_prices[i] < next_sellpoint_value:
             return i
 
     return None
 
 def realize_order(balance, buypoint, buypoint_value, sellpoint, sellpoint_value):
-    text = 'buypoint = {:>10}, sellpoint = {:>10}'.format(buypoint, sellpoint)
-    print(text)
+    text = 'Bought at price {} at buypoint {}, sold at price {} at sellpoint {}.'.format(buypoint_value, buypoint,
+                                                                                        sellpoint_value, sellpoint)
+    print(text, "Balance:", balance/buypoint_value*sellpoint_value)
     return balance/buypoint_value*sellpoint_value

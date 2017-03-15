@@ -8,6 +8,9 @@ selling_prices_local_max = functions.find_local_max(selling_prices)
 in_position = False
 balance = 1000
 
+print(buying_prices_local_min)
+print(selling_prices_local_max)
+
 for i in range(len(buying_prices_local_min)):
     if buying_prices_local_min[i] is not None:
         if not in_position:
@@ -21,10 +24,20 @@ for i in range(len(buying_prices_local_min)):
         if in_position:
             current_sellpoint = i
             next_sellpoint = functions.find_next_sellpoint(current_sellpoint, selling_prices_local_max)
+            next_buypoint = None
+
             if next_sellpoint is not None:
                 next_buypoint = functions.find_next_buypoint(current_sellpoint, next_sellpoint,
                                                              selling_prices_local_max, buying_prices_local_min)
-            if next_sellpoint is None or next_buypoint is not None:
+
+            if next_sellpoint is None and selling_prices_local_max[current_sellpoint] > position_buy_price:
                 position_sell_price = selling_prices_local_max[current_sellpoint]
-                balance = functions.realize_order(balance, current_buypoint, position_buy_price, current_sellpoint, position_sell_price)
+                balance = functions.realize_order(balance, current_buypoint, position_buy_price,
+                                                  current_sellpoint, position_sell_price)
+                in_position = False
+
+            if next_buypoint is not None and selling_prices_local_max[current_sellpoint] > position_buy_price:
+                position_sell_price = selling_prices_local_max[current_sellpoint]
+                balance = functions.realize_order(balance, current_buypoint, position_buy_price,
+                                                  current_sellpoint, position_sell_price)
                 in_position = False
