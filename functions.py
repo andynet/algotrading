@@ -60,3 +60,41 @@ def realize_order(balance, buypoint, buypoint_value, sellpoint, sellpoint_value)
                                                                                         sellpoint_value, sellpoint)
     print(text, "Balance:", balance/buypoint_value*sellpoint_value)
     return balance/buypoint_value*sellpoint_value
+
+
+def find_best_points(buying_prices, selling_prices):
+    buying_prices_local_min = find_local_min(buying_prices)
+    selling_prices_local_max = find_local_max(selling_prices)
+
+    orders = [0] * len(buying_prices)
+    in_position = False
+
+    for i in range(len(buying_prices_local_min)):
+        if buying_prices_local_min[i] is not None:
+            if not in_position:
+                position_buy_price = buying_prices_local_min[i]
+                current_buypoint = i
+                in_position = True
+            if in_position and buying_prices_local_min[i] < position_buy_price:
+                position_buy_price = buying_prices_local_min[i]
+                current_buypoint = i
+        if selling_prices_local_max[i] is not None:
+            if in_position:
+                current_sellpoint = i
+                next_sellpoint = find_next_sellpoint(current_sellpoint, selling_prices_local_max)
+                next_buypoint = None
+
+                if next_sellpoint is not None:
+                    next_buypoint = find_next_buypoint(current_sellpoint, next_sellpoint,
+                                                       selling_prices_local_max, buying_prices_local_min)
+
+                if next_sellpoint is None and selling_prices_local_max[current_sellpoint] > position_buy_price:
+                    orders[current_buypoint + 1] = 1
+                    orders[current_sellpoint + 1] = -1
+                    in_position = False
+
+                if next_buypoint is not None and selling_prices_local_max[current_sellpoint] > position_buy_price:
+                    orders[current_buypoint + 1] = 1
+                    orders[current_sellpoint + 1] = -1
+                    in_position = False
+    return orders
