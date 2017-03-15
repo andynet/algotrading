@@ -43,13 +43,6 @@ def find_next_sellpoint(current_sellpoint, selling_prices):
 
     return None
 
-# def find_next_sellpoint(current_sellpoint, selling_prices):
-#     for i in range(current_sellpoint, len(selling_prices)):
-#         if selling_prices[i] is not None:
-#             return i
-#
-#     return None
-
 def find_next_buypoint(current_sellpoint, next_sellpoint, selling_prices, buying_prices):
     current_sellpoint_value = selling_prices[current_sellpoint]
     next_sellpoint_value = selling_prices[current_sellpoint]
