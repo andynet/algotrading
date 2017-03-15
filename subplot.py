@@ -2,21 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import functions
 
-buying_prices_purified = []
-selling_prices_purified = []
-
 buying_prices, selling_prices = functions.read_input("EUR_USD.data")
 
-for i in range(1, len(buying_prices)-1):
-    if buying_prices[i-1] > buying_prices[i] <= buying_prices[i+1]:
-        buying_prices_purified.append(buying_prices[i])
-    else:
-        buying_prices_purified.append(None)
-
-    if selling_prices[i-1] < selling_prices[i] >= selling_prices[i+1]:
-        selling_prices_purified.append(selling_prices[i])
-    else:
-        selling_prices_purified.append(None)
+buying_prices_purified = functions.find_local_min(buying_prices)
+selling_prices_purified = functions.find_local_max(selling_prices)
 
 print(buying_prices_purified)
 print(selling_prices_purified)

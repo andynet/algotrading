@@ -1,16 +1,7 @@
 import time
+import functions
 
-buying_prices = []
-selling_prices = []
-
-with open("EUR_USD.data") as f:
-    lines = f.readlines()
-    for line in lines:
-        selling_prices.append(float(line.split()[0]))
-        buying_prices.append(float(line.split()[1]))
-
-# print(buying_prices)
-# print(selling_prices)
+buying_prices, selling_prices = functions.read_input("EUR_USD.data")
 
 order_placed = False
 balance = 1000
