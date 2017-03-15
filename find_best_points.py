@@ -7,7 +7,7 @@ selling_prices_local_max = functions.find_local_max(selling_prices)
 
 in_position = False
 position_buy_price = None
-balance = 10000000
+balance = 1000000
 
 for i in range(len(buying_prices_local_min)):
     # ak su obe None preskakujem
@@ -18,9 +18,11 @@ for i in range(len(buying_prices_local_min)):
         # ak som nasiel lepsiu vymenim
         if in_position and buying_prices_local_min[i] < position_buy_price:
             position_buy_price = buying_prices_local_min[i]
+            current_buypoint = i
         # ak nemam ziadnu beriem
         if not in_position:
             position_buy_price = buying_prices_local_min[i]
+            current_buypoint = i
             in_position = True
     # ak mam iba selling price
     if selling_prices_local_max[i] is not None:
@@ -31,14 +33,18 @@ for i in range(len(buying_prices_local_min)):
             # dalsia predajna pozicia, vacsia ako aktualna
             next_sellpoint = functions.find_next_sellpoint(current_sellpoint, selling_prices_local_max)
             # nakupna pozicia, mensia ako aktualna predajna medzi aktualnou predajnou a dalsou predajnou
-            next_buypoint = functions.find_next_buypoint(current_sellpoint, next_sellpoint,
-                                                         selling_prices_local_max, buying_prices_local_min)
+            if next_sellpoint != None:
+                next_buypoint = functions.find_next_buypoint(current_sellpoint, next_sellpoint,
+                                                             selling_prices_local_max, buying_prices_local_min)
             # ak neviem predat za viac tak predavam
             if next_sellpoint == None:
                 position_sell_price = selling_prices_local_max[current_sellpoint]
-                balance = functions.realize_order(balance, 0, position_buy_price, current_sellpoint, position_sell_price)
+                balance = functions.realize_order(balance, current_buypoint, position_buy_price, current_sellpoint, position_sell_price)
+                in_position = False
             # ak budem zachvilu vediet kupit za menej ako teraz mozem predat tak predavam
             if next_buypoint != None:
                 position_sell_price = selling_prices_local_max[current_sellpoint]
-                balance = functions.realize_order(balance, 0, position_buy_price, current_sellpoint, position_sell_price)
+                balance = functions.realize_order(balance, current_buypoint, position_buy_price, current_sellpoint, position_sell_price)
+                in_position = False
 
+print(balance)
