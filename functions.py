@@ -98,3 +98,45 @@ def find_best_points(buying_prices, selling_prices):
                     orders[current_sellpoint + 1] = -1
                     in_position = False
     return orders
+
+
+# # TODO change this function to return features specified in machine_learning.py, maybe delete this? :D
+# def create_training_data(buying_prices, selling_prices, orders, start, end, max_step):
+#     features = []
+#     labels = []
+#
+#     for i in range(start, end):
+#
+#         if i <= max_step:
+#             bp = buying_prices[0:i]
+#             sp = selling_prices[0:i]
+#             o = orders[i]
+#         else:
+#             bp = buying_prices[i-max_step:i]
+#             sp = selling_prices[i-max_step:i]
+#             o = orders[i]
+#
+#         current_price =
+#         median =
+#         minimum =
+#         maximum =
+#
+#         feature = bp + sp
+#         features.append(feature)
+#         labels.append(o)
+#
+#     return features, labels
+
+def get_stats(prices, xpoint, history):
+    if xpoint < history:
+        prices = prices[0:xpoint + 1]
+    else:
+        prices = prices[xpoint - history + 1:xpoint + 1]
+
+    price = prices[-1]
+    median = sorted(prices, key=float)[len(prices) // 2]
+    minimum = min(prices)
+    maximum = max(prices)
+
+    result = [price, median, minimum, maximum]
+    return result
