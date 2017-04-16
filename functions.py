@@ -43,6 +43,7 @@ def find_next_sellpoint(current_sellpoint, selling_prices):
 
     return None
 
+
 def find_next_buypoint(current_sellpoint, next_sellpoint, selling_prices, buying_prices):
     current_sellpoint_value = selling_prices[current_sellpoint]
     next_sellpoint_value = selling_prices[current_sellpoint]
@@ -54,6 +55,7 @@ def find_next_buypoint(current_sellpoint, next_sellpoint, selling_prices, buying
             return i
 
     return None
+
 
 def realize_order(balance, buypoint, buypoint_value, sellpoint, sellpoint_value):
     text = 'Bought at price {} at buypoint {}, sold at price {} at sellpoint {}.'.format(buypoint_value, buypoint,
@@ -100,33 +102,6 @@ def find_best_points(buying_prices, selling_prices):
     return orders
 
 
-# # TODO change this function to return features specified in machine_learning.py, maybe delete this? :D
-# def create_training_data(buying_prices, selling_prices, orders, start, end, max_step):
-#     features = []
-#     labels = []
-#
-#     for i in range(start, end):
-#
-#         if i <= max_step:
-#             bp = buying_prices[0:i]
-#             sp = selling_prices[0:i]
-#             o = orders[i]
-#         else:
-#             bp = buying_prices[i-max_step:i]
-#             sp = selling_prices[i-max_step:i]
-#             o = orders[i]
-#
-#         current_price =
-#         median =
-#         minimum =
-#         maximum =
-#
-#         feature = bp + sp
-#         features.append(feature)
-#         labels.append(o)
-#
-#     return features, labels
-
 def get_stats(prices, xpoint, history):
     if xpoint < history:
         prices = prices[0:xpoint + 1]
@@ -140,3 +115,17 @@ def get_stats(prices, xpoint, history):
 
     result = [price, median, minimum, maximum]
     return result
+
+
+def convert_to_graph_values(points, buying_prices, selling_prices):
+    values = []
+
+    for i in range(len(points)):
+        if points[i] == 0:
+            values.append(None)
+        if points[i] == 1:
+            values.append(buying_prices[i])
+        if points[i] == -1:
+            values.append(selling_prices[i])
+
+    return values
