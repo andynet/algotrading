@@ -1,20 +1,11 @@
-import v20
-import constants
-import functions
 import time
-
-print(constants.HOSTNAME, constants.TOKEN, constants.ACCOUNT_ID)
-
-api = v20.Context(hostname=constants.HOSTNAME, token=constants.TOKEN)
-account = api.account.get(accountID=constants.ACCOUNT_ID)
-# response = api.order.market(constants.ACCOUNT_ID, instrument='EUR_USD', units=100)
+import api_functions
 
 while True:
+    buy_price, sell_price = api_functions.get_price()
+    line = buy_price + ' ' + sell_price + '\n'
 
-    response = api.pricing.get(constants.ACCOUNT_ID, instruments='EUR_USD')
-    # print(response)
+    with open('EUR_USD.collected', 'a') as f:
+        f.write(line)
 
-    for price in response.get("prices", 200):
-        print("Buy at", price.bids[0].price)
-
-    time.sleep(1)
+    time.sleep(5)
