@@ -5,38 +5,39 @@ def read_input(filename):
     with open(filename) as f:
         lines = f.readlines()
         for line in lines:
-            buying_prices.append(float(line.split()[1]))
-            selling_prices.append(float(line.split()[0]))
+            buying_prices.append(float(line.split()[0]))
+            selling_prices.append(float(line.split()[1]))
 
     return buying_prices, selling_prices
 
 
-def find_local_min(prices):
-    lokal_min_prices = []
+def find_local_min_prices(prices):
+    local_min_prices = []
     for i in range(1, len(prices) - 1):
         if prices[i - 1] > prices[i] <= prices[i + 1]:
-            lokal_min_prices.append(prices[i])
+            local_min_prices.append(prices[i])
         else:
-            lokal_min_prices.append(None)
+            local_min_prices.append(None)
 
-    return lokal_min_prices
+    return local_min_prices
 
 
-def find_local_max(prices):
-    lokal_max_prices = []
+def find_local_max_prices(prices):
+    local_max_prices = []
     for i in range(1, len(prices) - 1):
         if prices[i - 1] < prices[i] >= prices[i + 1]:
-            lokal_max_prices.append(prices[i])
+            local_max_prices.append(prices[i])
         else:
-            lokal_max_prices.append(None)
+            local_max_prices.append(None)
 
-    return lokal_max_prices
+    return local_max_prices
 
 
+# TODO refactor from this line down
 def find_next_sellpoint(current_sellpoint, selling_prices):
     current_sellpoint_value = selling_prices[current_sellpoint]
     for i in range(current_sellpoint, len(selling_prices)):
-        if selling_prices[i] == None:
+        if selling_prices[i] is None:
             continue
         if selling_prices[i] > current_sellpoint_value:
             return i
@@ -49,7 +50,7 @@ def find_next_buypoint(current_sellpoint, next_sellpoint, selling_prices, buying
     next_sellpoint_value = selling_prices[current_sellpoint]
 
     for i in range(current_sellpoint, next_sellpoint):
-        if buying_prices[i] == None:
+        if buying_prices[i] is None:
             continue
         if current_sellpoint_value > buying_prices[i] < next_sellpoint_value:
             return i
@@ -59,14 +60,14 @@ def find_next_buypoint(current_sellpoint, next_sellpoint, selling_prices, buying
 
 def realize_order(balance, buypoint, buypoint_value, sellpoint, sellpoint_value):
     text = 'Bought at price {} at buypoint {}, sold at price {} at sellpoint {}.'.format(buypoint_value, buypoint,
-                                                                                        sellpoint_value, sellpoint)
+                                                                                         sellpoint_value, sellpoint)
     print(text, "Balance:", balance/buypoint_value*sellpoint_value)
     return balance/buypoint_value*sellpoint_value
 
 
 def find_best_points(buying_prices, selling_prices):
-    buying_prices_local_min = find_local_min(buying_prices)
-    selling_prices_local_max = find_local_max(selling_prices)
+    buying_prices_local_min = find_local_min_prices(buying_prices)
+    selling_prices_local_max = find_local_max_prices(selling_prices)
 
     orders = [0] * len(buying_prices)
     in_position = False

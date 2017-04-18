@@ -2,10 +2,10 @@ import functions
 import matplotlib.pyplot as plt
 import numpy as np
 
-buying_prices, selling_prices = functions.read_input("EUR_USD.data")
+buying_prices, selling_prices = functions.read_input("EUR_USD.collected")
 
-buying_prices_local_min = functions.find_local_min(buying_prices)
-selling_prices_local_max = functions.find_local_max(selling_prices)
+buying_prices_local_min = functions.find_local_min_prices(buying_prices)
+selling_prices_local_max = functions.find_local_max_prices(selling_prices)
 
 realized_buy = [None]*len(buying_prices)
 realized_sale = [None]*len(selling_prices)
