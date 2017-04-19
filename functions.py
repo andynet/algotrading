@@ -98,11 +98,12 @@ def find_best_points(buying_prices, selling_prices):
                     orders[current_selling_point + 1] = -1
                     in_position = False
 
-                if next_buying_point is not None and selling_prices_local_max[
-                    current_selling_point] > position_buy_price:
+                if next_buying_point is not None \
+                        and selling_prices_local_max[current_selling_point] > position_buy_price:
                     orders[current_buying_point + 1] = 1
                     orders[current_selling_point + 1] = -1
                     in_position = False
+                    
     return orders
 
 
