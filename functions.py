@@ -33,6 +33,7 @@ def find_local_max_prices(prices):
     return local_max_prices
 
 
+# TODO understand or refactor
 def find_next_selling_point(current_selling_point, selling_prices):
     current_selling_point_value = selling_prices[current_selling_point]
     for i in range(current_selling_point, len(selling_prices)):
