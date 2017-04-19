@@ -5,7 +5,7 @@ import api_functions
 
 while True:
     buy_price, sell_price = api_functions.get_price()
-    line = buy_price + ' ' + sell_price + ' ' + time.ctime() + '\n'
+    line = str(buy_price) + ' ' + str(sell_price) + ' ' + time.ctime() + '\n'
 
     with open('EUR_USD.collected', 'a') as f:
         f.write(line)
