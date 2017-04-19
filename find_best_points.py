@@ -28,12 +28,12 @@ for i in range(len(buying_prices_local_min)):
     if selling_prices_local_max[i] is not None:
         if in_position:
             current_sellpoint = i
-            next_sellpoint = functions.find_next_sellpoint(current_sellpoint, selling_prices_local_max)
+            next_sellpoint = functions.find_next_selling_point(current_sellpoint, selling_prices_local_max)
             next_buypoint = None
 
             if next_sellpoint is not None:
-                next_buypoint = functions.find_next_buypoint(current_sellpoint, next_sellpoint,
-                                                             selling_prices_local_max, buying_prices_local_min)
+                next_buypoint = functions.find_next_buying_point(current_sellpoint, next_sellpoint,
+                                                                 selling_prices_local_max, buying_prices_local_min)
 
             if next_sellpoint is None and selling_prices_local_max[current_sellpoint] > position_buy_price:
                 position_sell_price = selling_prices_local_max[current_sellpoint]

@@ -33,36 +33,38 @@ def find_local_max_prices(prices):
     return local_max_prices
 
 
-# TODO refactor from this line down
-def find_next_sellpoint(current_sellpoint, selling_prices):
-    current_sellpoint_value = selling_prices[current_sellpoint]
-    for i in range(current_sellpoint, len(selling_prices)):
+def find_next_selling_point(current_selling_point, selling_prices):
+    current_selling_point_value = selling_prices[current_selling_point]
+    for i in range(current_selling_point, len(selling_prices)):
         if selling_prices[i] is None:
             continue
-        if selling_prices[i] > current_sellpoint_value:
+        if selling_prices[i] > current_selling_point_value:
             return i
 
     return None
 
 
-def find_next_buypoint(current_sellpoint, next_sellpoint, selling_prices, buying_prices):
-    current_sellpoint_value = selling_prices[current_sellpoint]
-    next_sellpoint_value = selling_prices[current_sellpoint]
+def find_next_buying_point(current_selling_point, next_selling_point, selling_prices, buying_prices):
+    current_selling_point_value = selling_prices[current_selling_point]
+    next_selling_point_value = selling_prices[current_selling_point]
 
-    for i in range(current_sellpoint, next_sellpoint):
+    for i in range(current_selling_point, next_selling_point):
         if buying_prices[i] is None:
             continue
-        if current_sellpoint_value > buying_prices[i] < next_sellpoint_value:
+        if current_selling_point_value > buying_prices[i] < next_selling_point_value:
             return i
 
     return None
 
 
-def realize_order(balance, buypoint, buypoint_value, sellpoint, sellpoint_value):
-    text = 'Bought at price {} at buypoint {}, sold at price {} at sellpoint {}.'.format(buypoint_value, buypoint,
-                                                                                         sellpoint_value, sellpoint)
-    print(text, "Balance:", balance/buypoint_value*sellpoint_value)
-    return balance/buypoint_value*sellpoint_value
+def realize_order(balance, buying_point, buying_point_value, selling_point, selling_point_value):
+    text = 'Bought at price {} at buying point {}, sold at price {} at selling point {}.'.format(buying_point_value,
+                                                                                                 buying_point,
+                                                                                                 selling_point_value,
+                                                                                                 selling_point)
+
+    print(text, "Balance:", balance / buying_point_value * selling_point_value)
+    return balance / buying_point_value * selling_point_value
 
 
 def find_best_points(buying_prices, selling_prices):
@@ -76,38 +78,39 @@ def find_best_points(buying_prices, selling_prices):
         if buying_prices_local_min[i] is not None:
             if not in_position:
                 position_buy_price = buying_prices_local_min[i]
-                current_buypoint = i
+                current_buying_point = i
                 in_position = True
             if in_position and buying_prices_local_min[i] < position_buy_price:
                 position_buy_price = buying_prices_local_min[i]
-                current_buypoint = i
+                current_buying_point = i
         if selling_prices_local_max[i] is not None:
             if in_position:
-                current_sellpoint = i
-                next_sellpoint = find_next_sellpoint(current_sellpoint, selling_prices_local_max)
-                next_buypoint = None
+                current_selling_point = i
+                next_selling_point = find_next_selling_point(current_selling_point, selling_prices_local_max)
+                next_buying_point = None
 
-                if next_sellpoint is not None:
-                    next_buypoint = find_next_buypoint(current_sellpoint, next_sellpoint,
-                                                       selling_prices_local_max, buying_prices_local_min)
+                if next_selling_point is not None:
+                    next_buying_point = find_next_buying_point(current_selling_point, next_selling_point,
+                                                               selling_prices_local_max, buying_prices_local_min)
 
-                if next_sellpoint is None and selling_prices_local_max[current_sellpoint] > position_buy_price:
-                    orders[current_buypoint + 1] = 1
-                    orders[current_sellpoint + 1] = -1
+                if next_selling_point is None and selling_prices_local_max[current_selling_point] > position_buy_price:
+                    orders[current_buying_point + 1] = 1
+                    orders[current_selling_point + 1] = -1
                     in_position = False
 
-                if next_buypoint is not None and selling_prices_local_max[current_sellpoint] > position_buy_price:
-                    orders[current_buypoint + 1] = 1
-                    orders[current_sellpoint + 1] = -1
+                if next_buying_point is not None and selling_prices_local_max[
+                    current_selling_point] > position_buy_price:
+                    orders[current_buying_point + 1] = 1
+                    orders[current_selling_point + 1] = -1
                     in_position = False
     return orders
 
 
-def get_stats(prices, xpoint, history):
-    if xpoint < history:
-        prices = prices[0:xpoint + 1]
+def get_stats(prices, x_point, history):
+    if x_point < history:
+        prices = prices[0:x_point + 1]
     else:
-        prices = prices[xpoint - history + 1:xpoint + 1]
+        prices = prices[x_point - history + 1:x_point + 1]
 
     price = prices[-1]
     median = sorted(prices, key=float)[len(prices) // 2]
