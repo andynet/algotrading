@@ -1,13 +1,11 @@
 import sklearn
 from classes import *
-import numpy as np
-import matplotlib.pyplot as plt
 
 buying_prices = []
 selling_prices = []
 
-# buying_points = []      # True or False
-# selling_points = []     # True or False
+buying_points = None  # 0 or 1
+selling_points = None  # 0 or 1
 
 # features = array of numbers:
 # actual buying price, actual selling price,
@@ -34,28 +32,26 @@ investigator = Investigator()
 while True:
     buying_price, selling_price = feeder.get_prices()
 
+    if buying_price is None or selling_price is None:
+        break
+
     buying_prices.append(buying_price)
     selling_prices.append(selling_price)
 
     buying_points, selling_points = investigator.examine(buying_price, selling_price)
-    orders = functions.find_best_points(buying_points, selling_points)
 
-    # print(buying_prices)
-    print(buying_points)
-    # print(selling_prices)
-    print(selling_points)
-    print(orders)
+functions.draw_plot(buying_prices, selling_prices, buying_points, selling_points)
 
-    # features, labels = functions.get_statistics(buying_prices, selling_prices, buying_points, selling_points)
-    # identified_from, identified_to = functions.get_identified(labels)
-    #
-    # clf = sklearn.tree.DecisionTreeClassifier()
-    # clf.fit(features[identified_from:identified_to], labels[identified_from:identified_to])
-    # prediction = clf.predict([features[-1]])
-    #
-    # predictions.append(prediction)
+# features, labels = functions.get_statistics(buying_prices, selling_prices, buying_points, selling_points)
+# identified_from, identified_to = functions.get_identified(labels)
+#
+# clf = sklearn.tree.DecisionTreeClassifier()
+# clf.fit(features[identified_from:identified_to], labels[identified_from:identified_to])
+# prediction = clf.predict([features[-1]])
+#
+# predictions.append(prediction)
 
-    # if prediction == "B" and not BuyOrder.exists()
+# if prediction == "B" and not BuyOrder.exists()
 
 # labels = functions.convert_to_graph_values(labels, buying_prices, selling_prices)
 # predictions = functions.convert_to_graph_values(predictions, buying_prices, selling_prices)

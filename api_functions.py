@@ -19,7 +19,7 @@ def get_price(instrument='EUR_USD', count=1):
     if res:
         return res.json()['candles'][0]['ask']['o'], res.json()['candles'][0]['bid']['o']
     else:
-        return None
+        return None, None
 
 
 # buying

@@ -41,7 +41,7 @@ class Order:
 
 
 class Investigator:
-    mode = 'negative'
+    mode = 'negative'  # can be 'negative' (first = buying) or 'positive' (first = selling)  # TODO add neutral ???
     position = 0
 
     buying_prices = []
@@ -56,7 +56,6 @@ class Investigator:
     max_selling_price_value = None
     max_selling_price_position = None
 
-    # TODO possible off-by-one error, check it
     def examine(self, buying_price, selling_price):
         self.buying_prices.append(buying_price)
         self.selling_prices.append(selling_price)
@@ -75,6 +74,7 @@ class Investigator:
             self.mode = 'positive'
             if self.max_selling_price_position is not None:
                 self.selling_points[self.max_selling_price_position] = 1
+                self.buying_points[self.min_buying_price_position] = 1
             self.max_selling_price_value = selling_price
             self.max_selling_price_position = self.position
             self.position += 1
@@ -88,6 +88,7 @@ class Investigator:
             self.mode = 'negative'
             if self.min_buying_price_position is not None:
                 self.buying_points[self.min_buying_price_position] = 1
+                self.selling_points[self.max_selling_price_position] = 1
             self.min_buying_price_value = buying_price
             self.min_buying_price_position = self.position
             self.position += 1
@@ -118,7 +119,10 @@ class Feeder:
             time.sleep(5)
             buying_price, selling_price = api_functions.get_price()
         else:
-            buying_price, selling_price = self.buying_prices[self.position], self.selling_prices[self.position]
+            if self.position >= len(self.buying_prices):
+                buying_price, selling_price = None, None
+            else:
+                buying_price, selling_price = self.buying_prices[self.position], self.selling_prices[self.position]
 
         self.position += 1
         return buying_price, selling_price
