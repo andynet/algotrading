@@ -1,6 +1,5 @@
 import sklearn
-import functions
-from BuyOrder import BuyOrder
+from classes import *
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -28,22 +27,33 @@ features = []
 labels = []
 predictions = []
 
+order = Order()
+feeder = Feeder('EUR_USD.collected')  # should be name of file or keyword 'online'
+investigator = Investigator()
+
 while True:
-    buying_price, selling_price = functions.get_price("online")  # TODO create function get_price
+    buying_price, selling_price = feeder.get_prices()
 
     buying_prices.append(buying_price)
     selling_prices.append(selling_price)
 
-    buying_points, selling_points = functions.get_best_points(buying_prices, selling_prices)
+    buying_points, selling_points = investigator.examine(buying_price, selling_price)
+    orders = functions.find_best_points(buying_points, selling_points)
 
-    features, labels = functions.get_statistics(buying_prices, selling_prices, buying_points, selling_points)
-    identified_from, identified_to = functions.get_identified(labels)
+    # print(buying_prices)
+    print(buying_points)
+    # print(selling_prices)
+    print(selling_points)
+    print(orders)
 
-    clf = sklearn.tree.DecisionTreeClassifier()
-    clf.fit(features[identified_from:identified_to], labels[identified_from:identified_to])
-    prediction = clf.predict([features[-1]])
-
-    predictions.append(prediction)
+    # features, labels = functions.get_statistics(buying_prices, selling_prices, buying_points, selling_points)
+    # identified_from, identified_to = functions.get_identified(labels)
+    #
+    # clf = sklearn.tree.DecisionTreeClassifier()
+    # clf.fit(features[identified_from:identified_to], labels[identified_from:identified_to])
+    # prediction = clf.predict([features[-1]])
+    #
+    # predictions.append(prediction)
 
     # if prediction == "B" and not BuyOrder.exists()
 
