@@ -24,3 +24,17 @@ PROPOSAL - trailing stop
 * ((median of prices of last _integer_ selling points) - (median of prices of last _integer_ buying points)) * 0.2 (???)
 * this value will be subtracted from maximum already reached in this cycle
 * if actual price will drop below, then order.close() will be called
+
+LABELS:
+* 0 = unidentified
+* 1 = buy
+* 2 = positive trend
+* 3 = sell
+* 4 = negative trend
+
+- buying_points = 0 or 1
+- selling_points = 0 or 1
+
+STATISTICS
+* relative profit percentage = no action balance = 0%, best action balance = 100%
+* accuracy of AI

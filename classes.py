@@ -97,6 +97,9 @@ class Investigator:
         self.position += 1
         return self.buying_points, self.selling_points
 
+    def get_results(self):
+        return self.buying_points, self.selling_points
+
     # TODO implement
     def reset(self):
         pass
