@@ -28,6 +28,7 @@ predictions = []
 order = Order()
 feeder = Feeder('EUR_USD.collected')  # should be name of file or keyword 'online'
 investigator = Investigator()
+# evaluator = Evaluator()
 
 while True:
     buying_price, selling_price = feeder.get_prices()
@@ -40,6 +41,8 @@ while True:
 
     buying_points, selling_points = investigator.examine(buying_price, selling_price)
 
+# best_case = evaluator.find_best_case()
+# worst_case = evaluator.find_worst_case()
 functions.draw_plot(buying_prices, selling_prices, buying_points, selling_points)
 
 # features, labels = functions.get_statistics(buying_prices, selling_prices, buying_points, selling_points)

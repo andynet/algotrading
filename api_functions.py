@@ -12,9 +12,13 @@ def get_price(instrument='EUR_USD', count=1):
     url = 'https://{}/v3/instruments/{}/candles'.format(constants.HOSTNAME, instrument)
     header = {'Authorization': 'Bearer {}'.format(constants.TOKEN)}
     query = {'price': 'BA', 'count': count}
+    res = False
 
-    res = requests.get(url=url, headers=header, params=query)
-    # json.dump(res.json(), sys.stdout, indent=2)
+    try:
+        res = requests.get(url=url, headers=header, params=query)
+        # json.dump(res.json(), sys.stdout, indent=2)
+    except Exception as e:
+        print(e)
 
     if res:
         return res.json()['candles'][0]['ask']['o'], res.json()['candles'][0]['bid']['o']
