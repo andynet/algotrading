@@ -136,3 +136,25 @@ def create_features(buying_prices, selling_prices, buying_points, selling_points
         features.append(result)
 
     return features
+
+
+def filter(labels, features):
+    used_from = 0
+    used_to = 0
+    contain_useful_data = False
+
+    for i in range(len(labels)):
+        if not contain_useful_data:
+            if features[i][11] is None or features[i][10] is None:
+                used_from = i
+            else:
+                used_from += 1
+                contain_useful_data = True
+
+        if contain_useful_data:
+            if features[i][11] is not None and features[i][10] is not None:
+                used_to = i
+            else:
+                break
+
+    return used_from, used_to
