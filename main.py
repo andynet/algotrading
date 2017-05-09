@@ -1,32 +1,29 @@
 from sklearn.tree import DecisionTreeClassifier
 from classes import *
 
+# parameters
+starting_balance = 1000  # positive integer
+features_size = 1000  # positive integer, influences execution time
+features_history = 7  # positive integer, influences execution time
+input_dev = 'EUR_USD.week18'  # should be name of file or keyword 'online'
+
+# classes initialization
+feeder = Feeder(input_dev)
+investigator = Investigator()
+features_creator = FeaturesCreator(features_history)
+
+# variables initialization
 buying_prices = []
 selling_prices = []
-
-# features = array of numbers:
-# actual buying price, actual selling price,
-# number of time units from last start of cycle, number of time units from last end of cycle
-# value of last optimal buying point, value of last optimal selling point
-# average of prices from last buying point, average of prices from last selling point
-# average of prices of last _integer_ buying points, average of prices of last _integer_ selling points
-# average of durations of last _integer_ positive cycles, average of durations of last _integer_ negative cycles
-# features = []
+features = []
 predictions = []
-
-order = Order()
-feeder = Feeder('EUR_USD.week18')  # should be name of file or keyword 'online'
-investigator = Investigator()
-features_creator = FeaturesCreator(7)
-# evaluator = Evaluator()
-
-balance = 100000
+balance = starting_balance
 in_order = False
 last_checked = -1
 used_from = 0
 used_to = 0
-
 start = time.time()
+
 while True:
     buying_price, selling_price = feeder.get_prices()
 
@@ -48,16 +45,15 @@ while True:
     if used_from != 0:
         used_to, last_checked = functions.find_used_to(labels, last_checked)
 
-    if used_to - 1000 < used_from:
+    if used_to - features_size < used_from:
         begin = used_from
     else:
-        begin = used_to - 1000
+        begin = used_to - features_size
 
     if used_from < used_to:
         clf = DecisionTreeClassifier()
         used_features = features[begin:used_to]
         used_labels = labels[begin:used_to]
-        # print(start - time.time())
         start = time.time()
         clf.fit(used_features, used_labels)
         prediction = clf.predict([features[-1]])
@@ -83,14 +79,14 @@ while True:
 # start = time.time()
 # labels = functions.create_labels(buying_points, selling_points)
 # print(time.time() - start)
-#
+
 # start = time.time()
 # features = functions.create_features(buying_prices, selling_prices,
 #                                      buying_points, selling_points, 7)
 # # print(features[0:100], sep="\n")
 # print(time.time() - start)
 
-best_case = functions.evaluate(100000, buying_prices, selling_prices, buying_points, selling_points)
+best_case = functions.evaluate(starting_balance, buying_prices, selling_prices, buying_points, selling_points)
 print(best_case)
 print(balance)
 # functions.draw_plot(buying_prices, selling_prices, buying_points, selling_points)
