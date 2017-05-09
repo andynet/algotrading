@@ -138,23 +138,23 @@ def create_features(buying_prices, selling_prices, buying_points, selling_points
     return features
 
 
-def filter(labels, features):
-    used_from = 0
-    used_to = 0
-    contain_useful_data = False
+def find_used_from(features, last_checked):
+    last_checked += 1
+    if features[last_checked][10] is not None and features[last_checked][11] is not None:
+        used_from = last_checked
+    else:
+        used_from = 0
 
-    for i in range(len(labels)):
-        if not contain_useful_data:
-            if features[i][11] is None or features[i][10] is None:
-                used_from = i
-            else:
-                used_from += 1
-                contain_useful_data = True
+    return used_from, last_checked
 
-        if contain_useful_data:
-            if features[i][11] is not None and features[i][10] is not None:
-                used_to = i
-            else:
-                break
 
-    return used_from, used_to
+def find_used_to(labels, last_checked):
+    used_to = last_checked
+    for i in range(last_checked, len(labels)):
+        if labels[i] != 0:
+            used_to = i
+            last_checked = i
+        else:
+            break
+
+    return used_to, last_checked

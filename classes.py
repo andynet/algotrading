@@ -129,3 +129,89 @@ class Feeder:
 
         self.position += 1
         return buying_price, selling_price
+
+
+class FeaturesCreator:
+    number = 7
+    iterator = -1
+
+    features = []
+    buying_points_positions = []
+    selling_points_positions = []
+
+    def __init__(self, number):
+        self.number = number
+
+    def create_features(self, buying_prices, selling_prices, buying_points, selling_points):
+
+        self.iterator += 1
+
+        from_last_buy, from_last_sell = None, None
+        last_optimal_buy, last_optimal_sell = None, None
+        average_from_last_buy, average_from_last_sell = None, None
+        average_buying_prices, average_selling_prices = None, None
+        average_buying_duration, average_selling_duration = None, None
+
+        buying_price = buying_prices[self.iterator]
+        selling_price = selling_prices[self.iterator]
+
+        if len(self.buying_points_positions) == 0:
+            for i in range(0, self.iterator + 1):
+                if buying_points[i] == 1:
+                    self.buying_points_positions.append(i)
+        else:
+            for i in range(self.buying_points_positions[-1], self.iterator + 1):
+                if buying_points[i] == 1:
+                    self.buying_points_positions.append(i)
+
+        if len(self.selling_points_positions) == 0:
+            for i in range(0, self.iterator + 1):
+                if selling_points[i] == 1:
+                    self.selling_points_positions.append(i)
+        else:
+            for i in range(self.selling_points_positions[-1], self.iterator + 1):
+                if selling_points[i] == 1:
+                    self.selling_points_positions.append(i)
+
+        if len(self.buying_points_positions) > 0:
+            from_last_buy = self.iterator - self.buying_points_positions[-1]
+            last_optimal_buy = buying_prices[self.buying_points_positions[-1]]
+            average_from_last_buy = sum(buying_prices[self.buying_points_positions[-1]:(self.iterator + 1)]) / (
+            from_last_buy + 1)
+
+        if len(self.selling_points_positions) > 0:
+            from_last_sell = self.iterator - self.selling_points_positions[-1]
+            last_optimal_sell = selling_prices[self.selling_points_positions[-1]]
+            average_from_last_sell = sum(selling_prices[self.selling_points_positions[-1]:(self.iterator + 1)]) / (
+            from_last_sell + 1)
+
+        if len(self.buying_points_positions) >= (self.number + 1):
+            average_buying_prices = 0
+            average_buying_duration = 0
+            for j in range(self.number):
+                average_buying_prices += buying_prices[self.buying_points_positions[-(1 + j)]]
+                average_buying_duration += self.buying_points_positions[-(1 + j)] - self.buying_points_positions[
+                    -(2 + j)]
+            average_buying_prices /= self.number
+            average_buying_duration /= self.number
+
+        if len(self.selling_points_positions) >= (self.number + 1):
+            average_selling_prices = 0
+            average_selling_duration = 0
+            for j in range(self.number):
+                average_selling_prices += selling_prices[self.selling_points_positions[-(1 + j)]]
+                average_selling_duration += self.selling_points_positions[-(1 + j)] - self.selling_points_positions[
+                    -(2 + j)]
+            average_selling_prices /= self.number
+            average_selling_duration /= self.number
+
+        result = [buying_price, selling_price,
+                  from_last_buy, from_last_sell,
+                  last_optimal_buy, last_optimal_sell,
+                  average_from_last_buy, average_from_last_sell,
+                  average_buying_prices, average_selling_prices,
+                  average_buying_duration, average_selling_duration]
+
+        self.features.append(result)
+
+        return self.features
