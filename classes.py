@@ -11,7 +11,7 @@ class Order:
     max_buy_price = 0
     trailing_stop = 0
 
-    amount = 0
+    units = 0
 
     def exists(self):
         return self.active
@@ -24,11 +24,11 @@ class Order:
         self.max_buy_price = buy_price
         self.trailing_stop = trailing_stop
 
-        self.amount = amount / buy_price
+        self.units = amount / buy_price
 
     def close(self, sell_price):
         self.active = False
-        return self.amount * sell_price
+        return self.units * sell_price
 
     def check_trailing_stop(self, buy_point, sell_point):
         if self.max_buy_price < buy_point:
@@ -177,13 +177,13 @@ class FeaturesCreator:
             from_last_buy = self.iterator - self.buying_points_positions[-1]
             last_optimal_buy = buying_prices[self.buying_points_positions[-1]]
             average_from_last_buy = sum(buying_prices[self.buying_points_positions[-1]:(self.iterator + 1)]) / (
-            from_last_buy + 1)
+                from_last_buy + 1)
 
         if len(self.selling_points_positions) > 0:
             from_last_sell = self.iterator - self.selling_points_positions[-1]
             last_optimal_sell = selling_prices[self.selling_points_positions[-1]]
             average_from_last_sell = sum(selling_prices[self.selling_points_positions[-1]:(self.iterator + 1)]) / (
-            from_last_sell + 1)
+                from_last_sell + 1)
 
         if len(self.buying_points_positions) >= (self.number + 1):
             average_buying_prices = 0
@@ -215,3 +215,26 @@ class FeaturesCreator:
         self.features.append(result)
 
         return self.features
+
+
+class LabelsCreator:
+    iterator = 0
+    labels = []
+
+    def create_labels(self, buying_points, selling_points):
+
+        for i in range(self.iterator + 1, len(buying_points)):
+            if buying_points[i] == 1:
+                new_labels = [4] * (i - (self.iterator + 1))
+                new_labels.append(1)
+                self.labels = self.labels[0:self.iterator + 1] + new_labels
+                self.iterator = i
+            if selling_points[i] == 1:
+                new_labels = [2] * (i - (self.iterator + 1))
+                new_labels.append(3)
+                self.labels = self.labels[0:self.iterator + 1] + new_labels
+                self.iterator = i
+            if selling_points[i] == 0 and buying_points[i] == 0:
+                self.labels.append(0)
+
+        return self.labels

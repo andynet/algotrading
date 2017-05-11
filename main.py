@@ -5,26 +5,37 @@ from classes import *
 starting_balance = 1000  # positive integer
 features_size = 1000  # positive integer, influences execution time
 features_history = 7  # positive integer, influences execution time
-input_dev = 'EUR_USD.week18'  # should be name of file or keyword 'online'
+input_dev = 'EUR_USD.week17'  # should be name of file or keyword 'online'
 
 # classes initialization
 feeder = Feeder(input_dev)
 investigator = Investigator()
+labels_creator = LabelsCreator()
 features_creator = FeaturesCreator(features_history)
+active_order = Order()
 
 # variables initialization
 buying_prices = []
 selling_prices = []
-features = []
+
+# labels = []
+# features = []
+
 predictions = []
+orders = []
+
 balance = starting_balance
-in_order = False
+balance2 = starting_balance
+invested = starting_balance
+
 last_checked = -1
 used_from = 0
 used_to = 0
-start = time.time()
 
 while True:
+
+    start = time.time()
+
     buying_price, selling_price = feeder.get_prices()
 
     if buying_price is None or selling_price is None:
@@ -35,7 +46,7 @@ while True:
 
     buying_points, selling_points = investigator.examine(buying_price, selling_price)
 
-    labels = functions.create_labels(buying_points, selling_points)  # TODO optimize
+    labels = labels_creator.create_labels(buying_points, selling_points)
     features = features_creator.create_features(buying_prices, selling_prices,
                                                 buying_points, selling_points)
 
@@ -60,19 +71,26 @@ while True:
 
         predictions.append(prediction)
 
-        # if prediction == 1 and not order.exists():
-        # api_functions.open_long(balance)
-        # order.create()
-        if prediction == 1 and not in_order:
-            balance = balance / buying_prices[-1]
-            in_order = True
+        trailing_stop = (features[-1][9] - features[-1][8]) * 0.2
 
-        # if prediction == 3 and order.exists():
-        # api_functions.close_long()
-        # balance = order.close()
-        if prediction == 3 and in_order:
-            balance = balance * selling_prices[-1]
-            in_order = False
+        if prediction == 1:
+            order = Order()
+            order.create(buying_price, selling_price, invested, trailing_stop)
+            orders.append(order)
+            balance -= invested
+
+        if len(orders) > 0:
+            for order in orders:
+                balance += order.check_trailing_stop(buying_price, selling_price)
+
+        if prediction == 1 and not active_order.exists():
+            active_order.create(buying_price, selling_price, invested, trailing_stop)
+            balance2 = 0
+
+        if active_order.exists():
+            balance2 = active_order.check_trailing_stop(buying_price, selling_price)
+
+    print(time.time() - start)
 
 # buying_points, selling_points = investigator.get_results()
 
@@ -89,4 +107,5 @@ while True:
 best_case = functions.evaluate(starting_balance, buying_prices, selling_prices, buying_points, selling_points)
 print(best_case)
 print(balance)
+print(balance2)
 # functions.draw_plot(buying_prices, selling_prices, buying_points, selling_points)
